@@ -1,0 +1,10 @@
+[package]
+name = "rust2seq-macros"
+version = "0.2.0"
+edition = "2021"
+description = "Proc-macro shims for rust2seq. Internal — depend on `rust2seq` instead."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/macromoo/rust2seq"
+
+[lib]
+proc-macro = true

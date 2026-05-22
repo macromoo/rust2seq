@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -Dwarnings
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # `rust-toolchain.toml` pins the nightly + rustc-dev + llvm-tools-preview.
+      # rustup auto-installs everything listed there on the first cargo call.
+      - name: Install pinned toolchain
+        run: rustup show active-toolchain
+
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          # The plugin's separate target dir (target/plugin-<channel>/) is
+          # cleaned by cargo-rust2seq itself, so caching it is harmless.
+
+      - name: Build workspace
+        run: cargo build --workspace --all-targets
+
+      # Install BEFORE `cargo test` so the smoke test in rust2seq-driver runs
+      # against the current driver. Without this, rust-cache's cached
+      # `~/.cargo/bin/` would leave a stale `cargo-rust2seq` from a previous
+      # run, silently masking regressions in this commit's driver changes.
+      - name: Install the driver locally
+        run: cargo install --path rust2seq-driver --debug --locked
+
+      - name: Run unit + integration tests
+        run: cargo test --workspace
+
+      # The smoke test wipes + regenerates rust2seq-example/diagrams/; this
+      # asserts the regenerated output matches what's checked in.
+      - name: Verify the example diagram is up to date
+        run: git diff --exit-code -- rust2seq-example/diagrams/

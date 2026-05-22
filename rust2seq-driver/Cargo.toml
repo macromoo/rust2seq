@@ -1,0 +1,44 @@
+[package]
+name = "rust2seq-driver"
+version = "0.2.0"
+edition = "2021"
+description = "Custom rustc driver + cargo subcommand that walks the typed AST of an annotated crate and emits PlantUML sequence diagrams. Powered by rustc_plugin."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/macromoo/rust2seq"
+publish = false
+
+[package.metadata.rust-analyzer]
+# Tell rust-analyzer this crate uses internal rustc APIs so it loads them
+# from the configured sysroot.
+rustc_private = true
+
+[dependencies]
+# The plugin framework that handles cargo-subcommand glue, RUSTC_WRAPPER
+# orchestration, sysroot detection, per-crate driver invocation.
+rustc_plugin = "=0.15.2-nightly-2026-05-01"
+
+# Shared data model + emitter — the rustc-side reads HIR/THIR and populates
+# a `FlowSpec`, then hands off to `rust2seq::emit_plantuml`.
+rust2seq = { path = "../rust2seq" }
+
+# CLI arg parsing for `cargo rust2seq`. Serde is needed because rustc_plugin
+# serializes args across the cargo-subcommand → driver process boundary.
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+env_logger = { version = "0.10", default-features = false }
+
+# Used by cargo-rust2seq.rs to locate the plugin target dir for cache
+# invalidation. Stays small (no `--features` enabled).
+cargo_metadata = "0.18"
+
+[build-dependencies]
+# `build.rs` calls `rustc_plugin::build_main()` to wire up linking.
+rustc_plugin = "=0.15.2-nightly-2026-05-01"
+
+[[bin]]
+name = "cargo-rust2seq"
+path = "src/bin/cargo-rust2seq.rs"
+
+[[bin]]
+name = "rust2seq-driver"
+path = "src/bin/rust2seq-driver.rs"

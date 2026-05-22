@@ -1,0 +1,14 @@
+# Pinned to match the nightly that rustc_plugin (the framework rust2seq-driver
+# is built on) requires. Bump in lockstep with rustc_plugin releases — both the
+# crate version and this file have to move together because rustc's internals
+# are unstable.
+#
+# Current: rustc_plugin 0.15.2-nightly-2026-05-01
+#
+# `rustc-dev` is required to link against rustc_driver / rustc_interface /
+# rustc_middle / rustc_hir / rustc_span (all listed under `rustc-private` deps
+# in rust2seq-driver/Cargo.toml).
+
+[toolchain]
+channel = "nightly-2026-05-01"
+components = ["rust-src", "rustc-dev", "llvm-tools-preview"]

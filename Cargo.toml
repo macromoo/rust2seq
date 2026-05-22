@@ -1,0 +1,14 @@
+[workspace]
+resolver = "2"
+members = [
+    "rust2seq",
+    "rust2seq-macros",
+    "rust2seq-driver",
+    "rust2seq-example",
+]
+
+[workspace.package]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/macromoo/rust2seq"
+edition = "2021"
+authors = ["Joanna May"]

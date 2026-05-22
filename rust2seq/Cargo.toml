@@ -1,0 +1,12 @@
+[package]
+name = "rust2seq"
+version = "0.2.0"
+edition = "2021"
+description = "Sequence diagrams inferred from typed Rust source. Facade crate re-exporting the macros + shared types consumed by rust2seq-driver."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/macromoo/rust2seq"
+readme = "README.md"
+
+[dependencies]
+# Re-exports macros for user-facing source.
+rust2seq-macros = { path = "../rust2seq-macros", version = "0.2" }
